@@ -96,6 +96,14 @@ class Trollabot(object):
 		return response
 
 def main():
+	#daemon stuff 
+	pid = str(os.getpid())
+	pidfile = "/tmp/mydaemon.pid"
+	if os.path.isfile(pidfile):
+   		 print ('%s already exists, exiting' % pidfile)
+   		 sys.exit()
+	else:
+   		 open(pidfile, 'w').write(pid)
 	'''
 	loginInfo structure :
 	authToken
@@ -123,9 +131,10 @@ def main():
 	print(settings)
 	token = loginInfo[0]
 	bot = Trollabot(accessToken = token, autoStart = True, waitPeriod = float(settings[0]))
+	os.unlink(pidfile)
 	
-with daemon.DaemonContext():
-	main();
+
 
 #if __name__=="__main__":
-#	main()
+with daemon.DaemonContext():
+	main()
