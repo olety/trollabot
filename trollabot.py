@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 import vk, os, sys, codecs
-import daemon
 import urllib.request
 import json
 import time
@@ -28,6 +27,8 @@ class Trollabot(object):
 				"uid": 777
 			}]
 		   """
+	sorryString = 'Couldn\'t process your request, sorry. \n Incorrect command : '
+	docs = 'https://github.com/olety/trollabot/'
 
 	def __init__ (self, accessToken, autoStart = False, waitPeriod = 5.0):
 		print("Starting trollabot, access token =  " + accessToken)
@@ -67,22 +68,35 @@ class Trollabot(object):
 			self._parseMsg( sendID = sendID, msg = msgBody, dialogue = dialogue ) 	
 		return newMsg	
 	
-	def  _parseMsg( self, sendID = 1, msg = "", dialogue = False ):
-		msg = msg.split("!",1) #If it starts with !, then it's a command and we should parse it
+	def incRequest ( self, message = ''):
+		return self.sorryString + message + '\n' + 'Docs : ' + self.docs
+	
+	def  _parseMsg( self, sendID = 1, msg = '', dialogue = False ):
+		originalMsg = msg
+		msg = msg.split('!',1) #If it starts with !, then it's a command and we should parse it
 		if ( len(msg) > 1 ):
-			msg = msg[1].split(" ")
-			if ( msg[0] == "roll"):
-				if ( len(msg) > 1 ):	
-					if ( msg[1] == "d6" ):
-						self._printMsg(dialogue = dialogue, sendID = sendID, msg = ("Rolling a d6.. " + str(randint(1,6)) + "!"))
+			msg = msg[1].split(' ')
+			response = ''
+			if ( msg[0] == 'roll'):
+				if ( len(msg) > 1 ):
+					msg = msg[1].split('d')	
+					if ( len(msg) > 1 ):
+						try:
+							response = 'Rolling a d' + str(msg[1]) + '...\n' + str(randint(1,int(msg[1]))) + '!'
+						except ValueError:
+							response = self.incRequest(originalMsg)
+					else: 
+						response = self.incRequest(originalMsg)
 				else:
-						self._printMsg(dialogue = dialogue, sendID = sendID, msg = ("No die specified, rolling a d6.. " + str(randint(1,6)) + "!"))
-				
+					response = 'No die specified. For example, try using \"!roll d6\", \"!roll d20\", etc. :)' 	
+			else:
+				response = self.incRequest(originalMsg)			
+			self._printMsg(dialogue = dialogue, sendID = sendID, msg = response)
 		else:
 			print("Message isn't a command")
-
+		
 	def _printMsg( self, sendID ="", msg="TestMessage", dialogue = False ):
-		print("1")
+		#print("1")
 		if ( dialogue ):
 			print("Sending a message to a user : sendID = " + str(sendID) +  " ,Message =")
 			sys.stdout.buffer.write(msg.encode('utf-8'))
@@ -96,14 +110,6 @@ class Trollabot(object):
 		return response
 
 def main():
-	#daemon stuff 
-	pid = str(os.getpid())
-	pidfile = "/tmp/mydaemon.pid"
-	if os.path.isfile(pidfile):
-   		 print ('%s already exists, exiting' % pidfile)
-   		 sys.exit()
-	else:
-   		 open(pidfile, 'w').write(pid)
 	'''
 	loginInfo structure :
 	authToken
@@ -135,6 +141,5 @@ def main():
 	
 
 
-#if __name__=="__main__":
-with daemon.DaemonContext():
+if __name__=="__main__":
 	main()

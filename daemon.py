@@ -2,8 +2,11 @@ import time
 from daemon import runner 
 
 class Bot():
-	def __init__(self)
-	def run(self)
+	def __init__(self):
+		string = ""
+		
+	def run(self):
+		return "a"	
 
 bot = Bot()
 dae_runner = runner.DaemonRunner(bot)
