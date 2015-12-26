@@ -54,7 +54,7 @@ class Trollabot(object):
 		if (  newMsg[1].get('body') != oldMsg[1].get('body') and
 		      newMsg[1].get('date') != oldMsg[1].get('date')): #if it's new, parse it
 			dialogue = False
-			print(newMsg)
+			#print(newMsg)
 			sendID = newMsg[1].get('chat_id')
 			#print(newMsg[1])
 			if ( sendID == None ):
