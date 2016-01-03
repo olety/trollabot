@@ -165,6 +165,7 @@ class Trollabot(object):
 		originalMsg = msg
 		msg = msg.split('\n')[0].lower()
 		msg = msg.split('!') #If it starts with !, then it's a command and we should parse it
+		response = None
 		if ( len(msg) > 1 ):
 			msg = msg[1].split(' ') 
 			if ( len(msg) > 1 ):
