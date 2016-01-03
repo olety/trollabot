@@ -64,7 +64,7 @@ class Trollabot(object):
 		if ( not silentMode ):
 			self._errorExit("__init__ : Problem with getting silentMode from settings.json, make sure that such entry exists")
 		#Transforming silentMode to a boolean variable (using ternary operators)
-		self.printLogs = True if (silentMode == "True") else False
+		self.printLogs = False if (silentMode == "True") else True
 
 		#Trying to read accessToken from settings (It is generated automatically by vk.com api, you can get it, using the instructions here https://vk.com/dev/auth_mobile )
 		self.accessToken = self.settings[0].get("accessToken")
