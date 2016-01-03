@@ -8,7 +8,8 @@
         3. Run trollabot, `python3 trollabot.py`
         4. Deattach screen by pressind `ctrl-a ctrl-d`
         5. You can reattach it by using `screen -r "Name"`, or show all screens using `screen -ls`
-3. Enjoy!
+3. Add the bot user to your chat/friends
+4. Enjoy!
 
 
 ### Basic commands:
