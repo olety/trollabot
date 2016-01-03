@@ -163,7 +163,7 @@ class Trollabot(object):
 	def  _parseMsg( self, sendID = 1, msg = '', dialogue = False ):
 		sendSorry = False
 		originalMsg = msg
-		msg = msg.split('\n')[0]
+		msg = msg.split('\n')[0].lower()
 		msg = msg.split('!') #If it starts with !, then it's a command and we should parse it
 		if ( len(msg) > 1 ):
 			msg = msg[1].split(' ') 
@@ -288,6 +288,6 @@ class Trollabot(object):
 def main():
 	bot = Trollabot()
 
-if __name__=="__main__":
+if __name__ == "__main__":
 	main()
 
