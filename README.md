@@ -24,4 +24,5 @@
 
 ### Adding new commands 
 
-If you want to add new one-word commands, like `!kappa`, use the settings.json file and add them in the second element of a settings array (see the example-settings.json file)
+* If you want to add new one-word commands, like `!kappa`, use the settings.json file and add them in the second element of a settings array (see the example-settings.json file)
+* To add multi-word commands, like `!roll d6`, modify the ifs in the `_parseMsg` method
