@@ -60,5 +60,5 @@ ASCII images taken from http://twitchascii.blogspot.com
 - [x] Add single-word commands processing using JSON
 - [x] Add admin commands 
 - [x] Add more commands
-- [ ] Add logging into a file
+- [x] Add logging into a file
 - [ ] Add even more commands

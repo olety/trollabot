@@ -1,6 +1,7 @@
 #settings
 settings.json
-#trollabot/settings.json
+#log
+output-trollabot.log
 #backup
 backup/
 changelog.log
