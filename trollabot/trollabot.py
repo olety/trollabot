@@ -3,6 +3,7 @@ import vk, os, sys, codecs
 import urllib.request
 import json
 import time
+import datetime
 from random import randint
 
 class VSession (vk.Session):
@@ -24,13 +25,16 @@ class Trollabot(object):
 	accessToken = ""
 	sorryString = ""
 	docsString = ""
+	logFileName = ""
 	#bools
 	printLogs = True
+	logToFile = False
 	autoStart = True
 	#numbers
 	newMsg = 0
 	waitPeriod = 5.0
-
+	#files
+	logFile = None
 	#Administrative stuff
 	stop = False
 	restart = False
@@ -65,6 +69,25 @@ class Trollabot(object):
 			self._errorExit("__init__ : Problem with getting silentMode from settings.json, make sure that such entry exists")
 		#Transforming silentMode to a boolean variable (using ternary operators)
 		self.printLogs = False if (silentMode == "True") else True
+		
+		if ( self.printLogs ):
+			#Trying to read logToFile from settings
+			logToFile  = self.settings[0].get("logToFile")
+			if ( not logToFile ):
+				self._errorExit("__init__ : Problem with getting logToFile from settings.json, make sure that such entry exists")
+			#Transforming logToFile to a boolean variable (using ternary operators)
+			self.logToFile = True if (logToFile == "True") else False
+			
+			#Trying to read docsString from settings
+			self.logFileName = self.settings[0].get("logFileName")
+			if ( not self.logFileName ):
+				self._errorExit("__init__ : Problem with getting logFileName from settings.json, make sure that such entry exists")
+			
+			#Trying to open logFile
+			self.logFile = open(self.logFileName, "w+")
+			if ( not self.logFile ):
+				self._errorExit("__init__ : Couldn't open logFile")
+
 
 		#Trying to read accessToken from settings (It is generated automatically by vk.com api, you can get it, using the instructions here https://vk.com/dev/auth_mobile )
 		self.accessToken = self.settings[0].get("accessToken")
@@ -75,12 +98,11 @@ class Trollabot(object):
 		self.sorryString = self.settings[0].get("sorryString")
 		if ( not self.sorryString ):
 			self._errorExit("__init__ : Problem with getting sorryString from settings.json, make sure that such entry exists")
+		
 		#Trying to read docsString from settings
 		self.docsString = self.settings[0].get("docsString")
 		if ( not self.docsString ):
 			self._errorExit("__init__ : Problem with getting docsString from settings.json, make sure that such entry exists")
-
-
 
 		#Trying to read admins from settings
 		self.admins = self.settings[0].get("admins")
@@ -92,7 +114,7 @@ class Trollabot(object):
 			self.emptyMsg = self.settings[0].get("emptyMsg")
 			if ( not self.emptyMsg ):
 				self._errorExit("__init__ : Problem with getting emptyMsg from settings.json, make sure that such entry exists")
-			print(self.emptyMsg)
+
 		"""
 		#Trying to decode the emptyMsg using json
 		try:
@@ -105,12 +127,13 @@ class Trollabot(object):
 		#Trying to read waitPeriod from settings
 		self.waitPeriod = self.settings[0].get("waitPeriod")
 		if ( not self.waitPeriod):
-			self._errorExit("trollabot__init__ : Problem with getting waitPeriod from settings.json, make sure that such entry exists")
-
+			self._errorExit("__init__ : Problem with getting waitPeriod from settings.json, make sure that such entry exists")
+	
 		#Trying to read autoStart from settings
 		self.autoStart = self.settings[0].get("autoStart")
 		if ( not self.autoStart ):
 			self._errorExit("__init__ : Problem with getting autoStart from settings.json, make sure that such entry exists")
+			
 		#Transforming autoStart to a boolean variable (using ternary operators)
 		self.autoStart = True if (self.autoStart == "True") else False
 
@@ -118,8 +141,12 @@ class Trollabot(object):
 		#Ended reading the variables from settings
 		#
 
-		if ( self.printLogs ):
-			self._log("__init__ : starting trollabot, settings  =  " + str(self.settings[0]) + "\n Answers : " + str(self.settings[1]))
+		if ( self.printLogs ):				
+			logStart = "__init__ : starting trollabot, "
+			logStart += "\nSettings  :  \n" + str(json.dumps(self.settings[0], indent = 4, sort_keys = False))
+			logStart +=  "\nAnswers : \n" + str(json.dumps(self.settings[1], indent = 4, sort_keys = True, ensure_ascii = False))	
+			self._log(logStart)
+
 		session = VSession(access_token = self.accessToken)
 		self.vkApi = vk.API(session)
 		if ( self.autoStart or restart ):
@@ -260,11 +287,11 @@ class Trollabot(object):
 			if ( msg ):
 				if ( dialogue ):
 					if ( self.printLogs ):
-						self._log("_sendMsg : Sending a message to a user : sendID = " + str(sendID) +  ", Message = \"" + str(msg.encode('utf-8')) + "\"" )
+						self._log("_sendMsg : Sending a message to a user : sendID = " + str(sendID) +  ", Message = \"" + msg + "\"" )
 					response = self.vkApi.messages.send(uid = sendID, message = msg)
 				else:
 					if ( self.printLogs ):
-						self._log("_sendMsg : Sending a message to a chat : sendID = " + str(sendID) +  ", Message = \"" + str(msg.encode('utf-8')) + "\"" )
+						self._log("_sendMsg : Sending a message to a chat : sendID = " + str(sendID) +  ", Message = \"" + msg + "\"" )
 					response = self.vkApi.messages.send(chat_id = sendID, message = msg)
 			else :
 				response = "Couldn't print a message : message is null"
@@ -284,7 +311,11 @@ class Trollabot(object):
 		sys.exit(msg)
 
 	def _log (self, msg = ""):
-		print("trollabot " + msg)
+		response = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S") +  " - trollabot " + msg + "\n"
+		if ( self.logToFile ):
+			self.logFile.write(response)
+		else:
+			print(response)
 
 def main():
 	bot = Trollabot()
