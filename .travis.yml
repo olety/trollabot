@@ -6,4 +6,4 @@ python:
  - "3.5"
  - "nightly"
 install: 
- - "vk"
+ - "pip3 install vk"
