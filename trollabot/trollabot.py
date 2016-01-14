@@ -6,8 +6,10 @@ import time
 import datetime
 from random import randint
 
-class VSession (vk.Session):
+class VSession (vk.Session, logFile = None)::
 	def get_captcha_key(self, captcha_image_url):
+		if ( logFile ):
+			logFile.write("Captcha is required : " + captcha_image_url)
 		response = input("VSession get_captcha_key : Captcha is required, url : " + captcha_image_url)
 		return response
 
@@ -38,8 +40,6 @@ class Trollabot(object):
 	#Administrative stuff
 	stop = False
 	restart = False
-
-	#TODO: Add logging to a file
 
 	def __init__ (self, settingsFileName = "settings.json", restart = False):
 		self.settingsFileName = settingsFileName
@@ -146,8 +146,9 @@ class Trollabot(object):
 			logStart += "\nSettings  :  \n" + str(json.dumps(self.settings[0], indent = 4, sort_keys = False))
 			logStart +=  "\nAnswers : \n" + str(json.dumps(self.settings[1], indent = 4, sort_keys = True, ensure_ascii = False))	
 			self._log(logStart)
-
-		session = VSession(access_token = self.accessToken)
+			session = VSession(access_token = self.accessToken, logFile = self.logFile)
+		else:
+			session = VSession(access_token = self.accessToken)
 		self.vkApi = vk.API(session)
 		if ( self.autoStart or restart ):
 			self.start()
