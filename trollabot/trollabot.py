@@ -325,9 +325,9 @@ class Trollabot(object):
 def main():
 	if (len(sys.argv) > 0):
 		if ( sys.argv.index('test') ):
-			return 1
+			sys.exit(0)
 	bot = Trollabot()
-	return 0
+	sys.exit(1)
 
 if __name__ == "__main__":
 	main()
