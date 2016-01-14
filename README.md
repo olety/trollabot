@@ -1,3 +1,7 @@
+### Stats
+
+[![Build Status](https://travis-ci.org/olety/trollabot.svg?branch=master)](https://travis-ci.org/olety/trollabot)
+
 ### Installation 
 
 1. [Install Python](https://www.python.org/downloads/)
