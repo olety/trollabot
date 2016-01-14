@@ -1,15 +1,19 @@
 # -*- coding: utf-8 -*-
-import vk, os, sys, codecs
-import urllib.request
+import vk, sys, codecs
 import json
 import time
 import datetime
 from random import randint
 
-class VSession (vk.Session, logFile = None)::
+class VSession (vk.Session):
+	logFile = None
+	def __init__ (self, access_token = None, logFile = None):
+		vk.Session.__init__(self, access_token = access_token)
+		self.logFile = logFile
+
 	def get_captcha_key(self, captcha_image_url):
-		if ( logFile ):
-			logFile.write("Captcha is required : " + captcha_image_url)
+		if ( self.logFile ):
+			self.logFile.write("Captcha is required : " + captcha_image_url)
 		response = input("VSession get_captcha_key : Captcha is required, url : " + captcha_image_url)
 		return response
 
@@ -319,7 +323,11 @@ class Trollabot(object):
 			print(response)
 
 def main():
+	if (len(sys.argv) > 0):
+		if ( sys.argv.index('test') ):
+			return 1
 	bot = Trollabot()
+	return 0
 
 if __name__ == "__main__":
 	main()

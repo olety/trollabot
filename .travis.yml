@@ -7,3 +7,5 @@ python:
  - "nightly"
 install: 
  - "pip3 install vk"
+script:
+ - "python3 trollabot/trollabot.py test"

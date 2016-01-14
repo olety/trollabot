@@ -1,15 +1,17 @@
 ### Installation 
 
 1. [Install Python](https://www.python.org/downloads/)
-2. Run it using python3 - `python3 trollabot.py`
+2. Install the python vk api wrapper - `sudo pip3 install vk`
+3. Run the bot using python3 - `python3 trollabot.py`
     * If you want to run it constantly on a Linux server, you can use [screen](https://www.gnu.org/software/screen/)
         1. Install it, `sudo apt-get install screen`
         2. Create a new screen, `screen -S "trollabot"`
         3. Run trollabot, `python3 trollabot.py`
         4. Deattach screen by pressind `ctrl-a ctrl-d`
         5. You can reattach it by using `screen -r "Name"`, or show all screens using `screen -ls`
-3. Add the bot user to your chat/friends
-4. Enjoy!
+4. Add the bot user to your chat/friends
+5. ???
+6. PROFIT!
 
 
 ### Basic commands:
