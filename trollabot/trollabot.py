@@ -159,8 +159,11 @@ class Trollabot(object):
 
 	def start(self):
 		oldMsg = self.emptyMsg
+		getReturn = None
 		while ( not self.restart ):
-			oldMsg = self._getMsg(oldMsg = oldMsg)
+			getReturn = self._getMsg(oldMsg = oldMsg)
+			if ( getReturn ):
+				oldMsg = getReturn
 			time.sleep(self.waitPeriod)
 		#Restart is true at this point, so restart:
 		self.restart = False
@@ -176,21 +179,26 @@ class Trollabot(object):
 			self._log("_getMsg : Getting a message..")
 			self._log("_getMsg : OldMsg date, body  = " + str(oldMsg[1].get('date')) + "," + str(oldMsg[1].get('body')))
 			self._log("_getMsg : NewMsg date, body = " + str(newMsg[1].get('date')) + "," + str(newMsg[1].get('body')))
-		if (  newMsg[1].get('body') != oldMsg[1].get('body') and
-		      newMsg[1].get('date') != oldMsg[1].get('date')): #if it's new, parse it
-			dialogue = False
-			#self._log(newMsg)
-			sendID = newMsg[1].get('chat_id')
-			#self._log(newMsg[1])
-			if ( sendID == None ):
-				#chatID is empty, so it's a dialogue.
-				dialogue = True
-				sendID = newMsg[1].get('uid')
-			msgBody = newMsg[1].get('body').lower().replace(u'\u0456', u'i')
+		if ( len(newMsg) >= 2 ):
+			if (  newMsg[1].get('body') != oldMsg[1].get('body') and
+		   	   newMsg[1].get('date') != oldMsg[1].get('date')): #if it's new, parse it
+				dialogue = False
+				#self._log(newMsg)
+				sendID = newMsg[1].get('chat_id')
+				#self._log(newMsg[1])
+				if ( sendID == None ):
+					#chatID is empty, so it's a dialogue.
+					dialogue = True
+					sendID = newMsg[1].get('uid')
+				msgBody = newMsg[1].get('body').lower().replace(u'\u0456', u'i')
+				if ( self.printLogs ):
+					self._log("_getMsg : Sending a message to a parser : sendID = " + str(sendID) + ", dialogue mode = " + str(dialogue) + " ,Message = \"" + str(msgBody.encode('utf-8')) +"\"")
+				self._parseMsg( sendID = sendID, msg = msgBody, dialogue = dialogue )
+			return newMsg
+		else:
 			if ( self.printLogs ):
-				self._log("_getMsg : Sending a message to a parser : sendID = " + str(sendID) + ", dialogue mode = " + str(dialogue) + " ,Message = \"" + str(msgBody.encode('utf-8')) +"\"")
-			self._parseMsg( sendID = sendID, msg = msgBody, dialogue = dialogue )
-		return newMsg
+				self._log("_getMsg : Problems with getting a message. List contains too few elements. NewMsg:\n" + str(newMsg)) 
+			return None
 
 	def  _parseMsg( self, sendID = 1, msg = '', dialogue = False ):
 		sendSorry = False
@@ -324,8 +332,11 @@ class Trollabot(object):
 
 def main():
 	if (len(sys.argv) > 0):
-		if ( sys.argv.index('test') ):
-			sys.exit(0)
+		try:
+			if ( sys.argv.index('test') ):
+				sys.exit(0)
+		except ValueError:
+			None
 	bot = Trollabot()
 	sys.exit(1)
 
